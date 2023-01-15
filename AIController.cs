@@ -639,7 +639,6 @@ public class AIController : MonoBehaviour
 			yield break;
 		}
 
-		//null refence error here v
 		bool objectiveIsItem = enemyUC.objective.GetComponent<Pickup>() == null ? false: true;
 		int itemRange = enemy.GetComponent<Weapon>().item_range;
 
