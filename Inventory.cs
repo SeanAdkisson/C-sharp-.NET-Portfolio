@@ -8,14 +8,6 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour, IHasChanged
 {
-	//stats of armor
-//	public int health;
-//	public int armor;
-//	public int damage;
-//	public int fireResist;
-//	public int waterResist;
-//	public int natureResist;
-//	public int speed;
 
 	public List<Item> bagItems; // list of gameobjects or ids or <Item> here
 	public List<Item> handItems; //i think int IDs might be best
