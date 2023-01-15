@@ -9,7 +9,7 @@ public class PathfindingHandler : MonoBehaviour
 {
 
 	public static List<MapHexTile> FindPath(MapHexTile startNode, MapHexTile targetNode, bool mustBeUnblocked = false) {
-		//List<MapHexTile> toSearch = new List<MapHexTile>() { startNode };//open
+		
 		Heap<MapHexTile> toSearch = new Heap<MapHexTile>(MapGenerator.mg.MaxSize);
 		List<MapHexTile> processed = new List<MapHexTile>();//closed
 		toSearch.Add(startNode);
