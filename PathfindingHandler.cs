@@ -28,7 +28,7 @@ public class PathfindingHandler : MonoBehaviour
 
 				foreach (var neighbor in current.neighbors.Where(t =>  !processed.Contains(t))) {//each neighbor not yet processed
 					if(neighbor != null && neighbor.transform.parent.gameObject.activeSelf && neighbor.GetComponent<Collider>().enabled){
-						//works for player, tons of lag
+						
 						bool Blocked = false;
 						if(neighbor.occupant != null && neighbor != startNode && neighbor != targetNode){
 							if(neighbor.occupant.GetComponent<Pickup>() == null){
