@@ -6,6 +6,7 @@ using System.Linq;
 public class AIController : MonoBehaviour
 {
    //Note to the reader: This controls all the AI in a turn based game, where the game field is a hexagon (or square) grid.
+   //They can navigate effectively, pick up and use a large range of items, and use spells tactically
    //Several functions/methods were removed for readability
 	
     public Inventory inventory;
