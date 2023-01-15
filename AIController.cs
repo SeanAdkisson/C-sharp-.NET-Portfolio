@@ -28,7 +28,7 @@ public class AIController : MonoBehaviour
         }
     }
 
-    //#region
+    //#region asd
 	
     public void CreateAIPlayer(int team){
         //decide which team mate this is to decide spawn point
@@ -121,7 +121,7 @@ public class AIController : MonoBehaviour
         }
     }
     
-    //#endregion
+    //#endRegion
     
     public List<MapHexTile> path;
 	public bool showAIMovement;
