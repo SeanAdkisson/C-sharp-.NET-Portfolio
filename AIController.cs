@@ -28,6 +28,8 @@ public class AIController : MonoBehaviour
         }
     }
 
+	<details><summary>CLICK ME</summary>
+	
     public void CreateAIPlayer(int team){
         //decide which team mate this is to decide spawn point
         int playerNumber = team == 1 ? playerNumber = BattleController.bc.team1Players.Count + 1 : playerNumber = BattleController.bc.team2Players.Count + 1;
@@ -118,6 +120,8 @@ public class AIController : MonoBehaviour
 			 player.name = "Team2AI " + playerNumber;
         }
     }
+    
+    </details>
     
     public List<MapHexTile> path;
 	public bool showAIMovement;
