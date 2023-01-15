@@ -9,15 +9,14 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour, IHasChanged
 {
 
-	public List<Item> bagItems; // list of gameobjects or ids or <Item> here
-	public List<Item> handItems; //i think int IDs might be best
+	public List<Item> bagItems; 
+	public List<Item> handItems; 
 
 	public Transform slots;
 	public Transform backpackSlots;
 	public Transform handSlots;
 	public Text inventoryText;
 
-	//public GameObject selectedCharacter;
 	public GameObject selectedItem;
 	public GameObject toolTip;
 	public List<GameObject> allItems = new List<GameObject>();
@@ -36,7 +35,6 @@ public class Inventory : MonoBehaviour, IHasChanged
 	//checks if you have space for loot or buying items
 	public bool InventoryIsFull()
 	{
-		//alternatively you could check partymanager slot 18
 		if (bagItems.Count () == 3){// backpackSlots.childCount) {
 			return true;
 		} else {
@@ -46,7 +44,6 @@ public class Inventory : MonoBehaviour, IHasChanged
 
 	public bool HandsAreFull()
 	{
-		//alternatively you could check partymanager slot 18
 		if (handItems.Count () == 1){// backpackSlots.childCount) {
 			return true;
 		} else {
