@@ -1,5 +1,5 @@
 ﻿
-//Inventory management for an RPG with a backpack with a number of slots inside it and an item held in the hand
+//Inventory management for an RPG. Has a backpack with a number of slots inside it and an item held in the hand.
 
 using System.Collections;
 using System.Collections.Generic;
