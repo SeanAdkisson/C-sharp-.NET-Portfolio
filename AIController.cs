@@ -1,13 +1,17 @@
-﻿using System.Collections;
+﻿
+//Note to the reader: This controls all the AI in a turn based game, where the game field is a hexagon (or square) grid.
+//They can navigate effectively, pick up and use a large range of items, use spells tactically and more.
+//Several functions/methods were removed for readability
+
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
 public class AIController : MonoBehaviour
 {
-   //Note to the reader: This controls all the AI in a turn based game, where the game field is a hexagon (or square) grid.
-   //They can navigate effectively, pick up and use a large range of items, and use spells tactically
-   //Several functions/methods were removed for readability
+   
 	
     public Inventory inventory;
 
@@ -119,7 +123,7 @@ public class AIController : MonoBehaviour
     
     
     
-
+    //the main coroutine that runs the AIs
     public IEnumerator AIEnemyTurn(){
     	//can toggle viewing the AIs turns or skipping the animations
 	bool showNonPlayerTurns = BattleController.bc.showNonPlayerTurns;	
@@ -310,7 +314,7 @@ public class AIController : MonoBehaviour
 
 			//decide which spell the enemy will cast
 	
-			//distinguish the spells enemies can cast which have some priority
+			//define the spells enemies can cast which have some priority over others
 			string healingSpells = "Heal, Healing Rain, Divine Intervention";
 			string debuffSpells = "Demoralizing Roar, Contagion, Exposure, Serrating Vines, Rapid Virus";
 			string buffSpells = "Spike Shield, Blood Rage";
@@ -323,7 +327,7 @@ public class AIController : MonoBehaviour
 			foreach(string spellKnown in enemy.GetComponent<UnitController>().knownSpells){
 				Spell spell_class = SpellList.AllSpells.Find(x => x.spell_name == spellKnown);
 				//sometimes the AIs known spells will be a spell cast by item and have no Spell class
-		int spellID = spell_class == null? -1 : SpellList.AllSpells.IndexOf(spell_class);
+				int spellID = spell_class == null? -1 : SpellList.AllSpells.IndexOf(spell_class);
 
 				if (spellID == enemyUC.lastSpellCast || spell_class == null){
 					continue;
@@ -431,14 +435,15 @@ public class AIController : MonoBehaviour
 				enemyUC.lastSpellCast = -1;
 			}
 			else{
-				//show the range of the chosen spell (to the AI)
+				//show the range of the chosen spell (to the AI) and considers all possible target locations
 				SpellsManager.sm.ShowSpellRange(enemy, SpellList.AllSpells[chosenSpellID].spell_range,  SpellList.AllSpells[chosenSpellID].range_type);
 
-	    int targeting_type = SpellList.AllSpells[chosenSpellID].spell_targeting_type;
+	   			int targeting_type = SpellList.AllSpells[chosenSpellID].spell_targeting_type;
 				GameObject unitInRange = null;
 				foreach (GameObject tile in SpellsManager.sm.spacesInRange){
 					if(tile.GetComponent<MapHexTile>().occupant != null && tile.GetComponent<MapHexTile>().occupant.GetComponent<Pickup>() == null){
-						//!!!! a spell is not always cast on the player
+						
+						//check if the spell can be cast on this target
 						bool correct_target = false;
 
 						string occupantTag = tile.GetComponent<MapHexTile>().occupant.gameObject.tag;
@@ -447,72 +452,72 @@ public class AIController : MonoBehaviour
 						//0 = ally & self, 1 = self, 2 = ally only , 3 = enemy only, 4 = monster only,
 						//5 = enemy & monster  6= any target type.  
 
-		    //allys
-						if(targeting_type == 0){
-			if(occupantTag == enemy.tag){
-			    correct_target = true;
-			}
-		    }
-		    //self
-		    if(targeting_type == 1){
-			if(tile.GetComponent<MapHexTile>().occupant == enemy){
-			    correct_target = true;
-			}
-		    }
-		    //only allies
-		    if(targeting_type == 1){
-			if(tile.GetComponent<MapHexTile>().occupant != enemy && occupantTag == enemy.tag){
-			    correct_target = true;
-			}
-		    }
-		    //only enemies
-		    if(targeting_type == 3){
-			if(occupantTag != enemy.tag && occupantTag != "Monster"){
-			    correct_target = true;
-			}
-		    }
-		    //only Monsters
-		    if(targeting_type == 4){
-			if(occupantTag == "Monster"){
-			    correct_target = true;
-			}
-		    }
-		    //enemies + monsters
-						if(targeting_type == 5){
-			if(occupantTag != enemy.tag){
-			    correct_target = true;
-			}
-		    }
+						    //allys
+						    if(targeting_type == 0){
+							if(occupantTag == enemy.tag){
+							    correct_target = true;
+							}
+						    }
+						    //self
+						    if(targeting_type == 1){
+							if(tile.GetComponent<MapHexTile>().occupant == enemy){
+							    correct_target = true;
+							}
+						    }
+						    //only allies
+						    if(targeting_type == 1){
+							if(tile.GetComponent<MapHexTile>().occupant != enemy && occupantTag == enemy.tag){
+							    correct_target = true;
+							}
+						    }
+						    //only enemies
+						    if(targeting_type == 3){
+							if(occupantTag != enemy.tag && occupantTag != "Monster"){
+							    correct_target = true;
+							}
+						    }
+						    //only Monsters
+						    if(targeting_type == 4){
+							if(occupantTag == "Monster"){
+							    correct_target = true;
+							}
+						    }
+						    //enemies + monsters
+						    if(targeting_type == 5){
+							if(occupantTag != enemy.tag){
+							    correct_target = true;
+							}
+						    }
 
-						if (targeting_type == 6){
+						    if (targeting_type == 6){
 							correct_target = true;
-						}
+						    }
 
-						//prevent double imbue
-						if(imbueSpells.Contains(SpellList.AllSpells[chosenSpellID].spell_name)){
-							GameObject target = tile.GetComponent<MapHexTile>().occupant;
+						    //prevent double imbue
+						    if(imbueSpells.Contains(SpellList.AllSpells[chosenSpellID].spell_name)){
+						    	    GameObject target = tile.GetComponent<MapHexTile>().occupant;
 
-							//check if target is imbued
-							if(target == BattleController.bc.player){
-								if(inventory.handSlots.GetChild(0).GetChild(0).GetComponent<Weapon>().isImbued){
+							    //check if target is imbued
+							    if(target == BattleController.bc.player){
+								    if(inventory.handSlots.GetChild(0).GetChild(0).GetComponent<Weapon>().isImbued){
 									correct_target = false;
-								}
-							}
-							else if(target.GetComponent<Weapon>().isImbued){
+								    }
+							    }
+							    else if(target.GetComponent<Weapon>().isImbued){
 								correct_target = false;
-							}
-						}
+							    }
+						    }
 
 						if(correct_target){
 
 							unitInRange = tile.GetComponent<MapHexTile>().occupant;
 						}
 					}
-		//targeting spaces
-		//i guess this will just target closeby spaces
-		else if( targeting_type == 7){
-			unitInRange = tile;
-		}
+					//targeting spaces
+					//i guess this will just target closeby spaces
+					else if( targeting_type == 7){
+						unitInRange = tile;
+					}
 				}
 				if(showAIMovement && showNonPlayerTurns) yield return new WaitForSeconds (0.3f);
 
@@ -580,7 +585,7 @@ public class AIController : MonoBehaviour
 			SpellsManager.sm.ShowSpellRange(enemy,enemy.GetComponent<Weapon>().item_range,"range");
 			GameObject playerUnitInWeaponRange = null;
 			foreach (GameObject tile in SpellsManager.sm.spacesInRange){
-	    GameObject occupant = tile.GetComponent<MapHexTile>().occupant;
+	  			GameObject occupant = tile.GetComponent<MapHexTile>().occupant;
 				if(occupant != null){
 					if(occupant.tag != enemy.tag && occupant.GetComponent<Pickup>() == false){
 						playerUnitInWeaponRange = tile.GetComponent<MapHexTile>().occupant;
@@ -618,7 +623,7 @@ public class AIController : MonoBehaviour
 
 	}
         
-        //mCamera.GetComponent<CameraController>().enabled = true;
+        
 		//start player turn
 		yield return new WaitForEndOfFrame();
 		BattleController.bc.StartPlayerTurn();
@@ -626,7 +631,7 @@ public class AIController : MonoBehaviour
 	
 
 
-
+	//Movement, used above
 	public IEnumerator Move(UnitController enemyUC, GameObject enemy){
 		bool showNonPlayerTurns = BattleController.bc.showNonPlayerTurns;
 
@@ -829,7 +834,7 @@ public class AIController : MonoBehaviour
 
 	//swap weapons upon picking up a weapon if it is better than what we have
 	void SwapHeldWeapon(int newItemID, UnitController wielderController){
-		//determine which weapon is better
+		//determine which weapon is better by quantifying its stats and effects
 		Item newItem = ItemsList.AllItemInfo[newItemID];
 		float totalNewStats = newItem.item_damage_roll_count * newItem.item_damage_roll_sides * (1+ newItem.item_crit_chance*0.01f );
 		totalNewStats += newItem.item_range;
