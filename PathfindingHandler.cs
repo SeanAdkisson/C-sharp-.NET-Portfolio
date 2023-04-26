@@ -44,7 +44,8 @@ public class PathfindingHandler : MonoBehaviour
 							}
 						}
 						if(Blocked == false){
-							if(Mathf.Abs(neighbor.transform.position.y - current.transform.position.y) <= MapGenerator.mg.maximumWalkableHeightGap){//check if it is to high to climb
+							//checks if it is to high to climb
+							if(Mathf.Abs(neighbor.transform.position.y - current.transform.position.y) <= MapGenerator.mg.maximumWalkableHeightGap){
 								
 								var inSearch = toSearch.Contains(neighbor);
 
