@@ -1,5 +1,5 @@
 ﻿
-//Note to the reader: This controls all the AI in a turn based game, where the game field is a hexagon (or square) grid.
+//Note to the reader: This controls all the AI units in a turn based game, where the game field is a hexagon (or square) grid.
 //They can navigate effectively, pick up and use a large range of items, use spells tactically and more.
 //Several functions/methods were removed for readability
 
