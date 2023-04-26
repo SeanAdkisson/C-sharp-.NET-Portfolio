@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿
+//Generates a hex grid strategy map with size/shape parameters given by the user
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
