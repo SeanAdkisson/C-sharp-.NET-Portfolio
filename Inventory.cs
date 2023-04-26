@@ -25,6 +25,7 @@ public class Inventory : MonoBehaviour, IHasChanged
 	public List<GameObject> allItems = new List<GameObject>();
 
 	public GameObject weaponPrefab;
+	
 	public void ClearTooltipAndDeselect(){
 		if (toolTip != null) {
 				Destroy (toolTip);
@@ -53,9 +54,54 @@ public class Inventory : MonoBehaviour, IHasChanged
 			return false;
 		}
 	}
+	
+	public void AddItem(int itemID){
+		#region Deny Conditions
+		//check if the item is unique-equipped (can only hold 1)
+		if(ItemsList.AllItemInfo[itemID].unique_item ){
+			
+			if( handItems.Contains(ItemsList.AllItemInfo[itemID]) ||  bagItems.Contains(ItemsList.AllItemInfo[itemID]))
+			{
+				Debug.Log("You can only carry one of that item.");
+				return;
+			}
+			
+		}
+		//check if inventory is full
+		if(InventoryIsFull()){
+			Debug.Log("Inventory is full.");
+			return;
+		}
+		#endregion
+
+		//On Pickup Effects
+		if(ItemsList.AllItemInfo[itemID].dropsAllCursedItems){
+			DropAllCursed();
+		}
+
+		//only apply the effects of weapons while they are in the hand slot
+		if(ItemsList.AllItemInfo[itemID].equippable){//if this is a hand item
+			if (HandsAreFull ()) {
+				bagItems.Add (ItemsList.AllItemInfo[itemID]);						
+			}else{
+				handItems.Add (ItemsList.AllItemInfo[itemID]);
+				ApplyItemEffects(ItemsList.AllItemInfo[itemID], BattleController.bc.player);
+			}
+		
+		}else{
+			bagItems.Add (ItemsList.AllItemInfo[itemID]);
+			if (ItemsList.AllItemInfo[itemID].equippable == false){
+				ApplyItemEffects(ItemsList.AllItemInfo[itemID], BattleController.bc.player);
+			}
+		}
+
+		
+		StartCoroutine (UpdateItems());
+
+	}
 
 
-	//Instantiates items into the inventory bag and replaces items[] list with references to the instantiated items
+	//Instantiates physical items into the inventory bag when a new item is added and gives it stats and effects
 	public IEnumerator UpdateItems(){
 
 		//checks if each item is instantiated yet and if not instantiates it into an empty slot
@@ -76,7 +122,8 @@ public class Inventory : MonoBehaviour, IHasChanged
 					}
 				}
 			}
-			int numberDuplicates = 0;//duplicates in list(not instantiated)
+			//compares number of duplicates in the script list to the number of duplicates instantiated previously
+			int numberDuplicates = 0;//duplicate in list(not instantiated)
 			foreach (Item item in bagItems){
 				if(item == bagItems[j]){
 					numberDuplicates += 1;
@@ -203,50 +250,7 @@ public class Inventory : MonoBehaviour, IHasChanged
 	#endregion
 
 
-	public void AddItem(int itemID){
-		#region Deny Conditions
-		//check if the item is unique-equipped (can only hold 1)
-		if(ItemsList.AllItemInfo[itemID].unique_item ){
-			
-			if( handItems.Contains(ItemsList.AllItemInfo[itemID]) ||  bagItems.Contains(ItemsList.AllItemInfo[itemID]))
-			{
-				Debug.Log("You can only carry one of that item.");
-				return;
-			}
-			
-		}
-		//check if inventory is full
-		if(InventoryIsFull()){
-			Debug.Log("Inventory is full.");
-			return;
-		}
-		#endregion
-
-		//On Pickup Effects
-		if(ItemsList.AllItemInfo[itemID].dropsAllCursedItems){
-			DropAllCursed();
-		}
-
-		//only apply the effects of weapons while they are in the hand slot
-		if(ItemsList.AllItemInfo[itemID].equippable){//if this is a hand item
-			if (HandsAreFull ()) {
-				bagItems.Add (ItemsList.AllItemInfo[itemID]);						
-			}else{
-				handItems.Add (ItemsList.AllItemInfo[itemID]);
-				ApplyItemEffects(ItemsList.AllItemInfo[itemID], BattleController.bc.player);
-			}
-		
-		}else{
-			bagItems.Add (ItemsList.AllItemInfo[itemID]);
-			if (ItemsList.AllItemInfo[itemID].equippable == false){
-				ApplyItemEffects(ItemsList.AllItemInfo[itemID], BattleController.bc.player);
-			}
-		}
-
-		
-		StartCoroutine (UpdateItems());
-
-	}
+	
  
 	public void ApplyItemEffects(Item item, GameObject wielder){
 		//Debug.Log("Applying passives");
