@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿
+//A-Star pathfinding algorithm used to find paths around a hexagon grid map, included a heap implementation to cut down on calculation time
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
